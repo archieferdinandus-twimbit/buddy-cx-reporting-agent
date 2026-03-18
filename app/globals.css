@@ -1,27 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ──────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --cx-bg:        #0C0E14;
+  --cx-surface:   #131620;
+  --cx-surface-2: #1A1E2E;
+  --cx-surface-3: #212639;
+
+  /* Borders */
+  --cx-border:    #252A3D;
+  --cx-border-2:  #303654;
+
+  /* Text */
+  --cx-text:   #E8EAF0;
+  --cx-text-2: #8891AA;
+  --cx-text-3: #4A5070;
+
+  /* Accent — warm amber */
+  --cx-accent:       #E8A045;
+  --cx-accent-2:     #C47E2A;
+  --cx-accent-muted: rgba(232, 160, 69, 0.12);
+  --cx-accent-glow:  rgba(232, 160, 69, 0.25);
+
+  /* Status */
+  --cx-green: #4ADE80;
+  --cx-red:   #F87171;
+
+  /* Display font */
+  --font-display: 'Instrument Serif', Georgia, serif;
+
+  /* Legacy compat */
+  --background: var(--cx-bg);
+  --foreground: var(--cx-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─── Base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--cx-bg);
+  color: var(--cx-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 4px; height: 4px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--cx-border-2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cx-accent); }
+
+/* ─── Keyframes ──────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0);    opacity: 0.4; }
+  40%            { transform: translateY(-4px); opacity: 1;   }
+}
+
+/* ─── Tiptap / ProseMirror ────────────────────────────────── */
+.tiptap-editor.ProseMirror {
+  outline: none;
+  color: var(--cx-text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tiptap-editor.ProseMirror h1 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin: 1.5em 0 0.5em;
+  color: var(--cx-text);
+}
+
+.tiptap-editor.ProseMirror h2 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin: 1.25em 0 0.4em;
+  color: var(--cx-text);
+}
+
+.tiptap-editor.ProseMirror h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1em 0 0.3em;
+  color: var(--cx-text);
+}
+
+.tiptap-editor.ProseMirror p {
+  margin: 0.5em 0;
+}
+
+.tiptap-editor.ProseMirror ul,
+.tiptap-editor.ProseMirror ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.tiptap-editor.ProseMirror li {
+  margin: 0.2em 0;
+}
+
+.tiptap-editor.ProseMirror blockquote {
+  border-left: 3px solid var(--cx-accent);
+  padding-left: 1em;
+  margin: 0.75em 0;
+  color: var(--cx-text-2);
+  font-style: italic;
+}
+
+.tiptap-editor.ProseMirror code {
+  background: var(--cx-surface-3);
+  border-radius: 4px;
+  padding: 0.15em 0.35em;
+  font-size: 0.85em;
+}
+
+.tiptap-editor.ProseMirror pre {
+  background: var(--cx-surface-3);
+  border-radius: 8px;
+  padding: 1em;
+  margin: 0.75em 0;
+  overflow-x: auto;
+}
+
+.tiptap-editor.ProseMirror pre code {
+  background: none;
+  padding: 0;
+}
+
+.tiptap-editor.ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--cx-border);
+  margin: 1.5em 0;
+}
+
+.tiptap-editor.ProseMirror strong {
+  color: var(--cx-text);
+  font-weight: 600;
+}
+
+/* Tables in editor — compact sizing */
+.tiptap-editor.ProseMirror table {
+  border-collapse: collapse;
+  width: auto;           /* don't force 100% — let columns size naturally */
+  max-width: 100%;
+  margin: 0.75em 0;
+  font-size: 0.7rem;     /* smaller than body text */
+  border-radius: 6px;
+  border: 1px solid var(--cx-border);
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.tiptap-editor.ProseMirror th {
+  position: relative;
+  background: var(--cx-surface-2);
+  color: var(--cx-text-3);
+  font-size: 0.575rem;   /* extra tight header label */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;      /* was 8px 12px */
+  text-align: left;
+  border-bottom: 1px solid var(--cx-border);
+  white-space: nowrap;
+}
+
+.tiptap-editor.ProseMirror td {
+  position: relative;
+  padding: 3px 8px;      /* was 7px 12px */
+  color: var(--cx-text-2);
+  border-bottom: 1px solid rgba(37, 42, 61, 0.6);
+  vertical-align: middle;
+}
+
+.tiptap-editor.ProseMirror tr:last-child td {
+  border-bottom: none;
+}
+
+.tiptap-editor.ProseMirror tr:hover td {
+  background: rgba(26, 30, 46, 0.5);
+}
+
+/* Column resize handle (shown when resizable: true) */
+.tiptap-editor.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--cx-accent);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: 2px;
+}
+
+/* Show handle prominently on hover */
+.tiptap-editor.ProseMirror th:hover .column-resize-handle,
+.tiptap-editor.ProseMirror td:hover .column-resize-handle {
+  opacity: 1;
+}
+
+/* Resize-in-progress cursor */
+.tiptap-editor.ProseMirror.resize-cursor,
+.tiptap-editor.ProseMirror.resize-cursor * {
+  cursor: col-resize;
+}
+
+/* Table highlighted while AI describe / diff panel is open */
+.tiptap-editor table[data-ai-pending] {
+  outline: 2px solid var(--cx-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+  transition: outline 0.15s ease;
+}
+
+.tiptap-editor.ProseMirror figure {
+  margin: 1em 0;
+}
+
+.tiptap-editor.ProseMirror figcaption {
+  font-size: 0.7rem;
+  color: var(--cx-text-3);
+  margin-top: 6px;
+  padding-left: 4px;
+  font-style: italic;
+}
+
+/* Selected cell highlight (Tiptap table) */
+.tiptap-editor.ProseMirror .selectedCell::after {
+  background: rgba(232, 160, 69, 0.08);
+  content: "";
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+/* AI diff preview content */
+.ai-diff-preview p {
+  margin: 0.5em 0;
+  font-style: italic;
+  color: var(--cx-text);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.ai-diff-preview strong {
+  font-weight: 600;
+  color: var(--cx-text);
+}
+
+/* Placeholder */
+.tiptap-editor.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--cx-text-3);
+  pointer-events: none;
+  height: 0;
+}
+
+/* ─── Utilities ──────────────────────────────────────────── */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance   { text-wrap: balance; }
+  .font-display   { font-family: var(--font-display); }
+
+  .animate-fade-in  { animation: fade-in  0.4s ease both; }
+  .animate-slide-up { animation: slide-up 0.5s ease both; }
+  .animate-spin-slow { animation: spin-slow 1.2s linear infinite; }
+
+  /* Dot bounce helper — apply delay via inline style */
+  .animate-dot-bounce { animation: dot-bounce 1.2s ease infinite; }
 }
