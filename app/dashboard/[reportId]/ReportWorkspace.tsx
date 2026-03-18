@@ -44,36 +44,31 @@ export function ReportWorkspace({
   const store = useAppStore();
 
   // Hydrate store from saved report on mount
-  const didInit = useRef(false);
   useEffect(() => {
-    if (!didInit.current) {
-      didInit.current = true;
+    // Set current report context
+    store.setCurrentReport(reportId, reportTitle);
 
-      // Set current report context
-      store.setCurrentReport(reportId, reportTitle);
-
-      // Hydrate dataset
-      if (initialDataset) {
-        store.setCurrentDataset(initialDataset);
-      }
-
-      // Hydrate saved state if any
-      if (Object.keys(initialSections).length > 0) {
-        store.hydrateReport(
-          initialSections,
-          initialTaggedInsights,
-          initialChatHistory,
-          initialCanvasCards
-        );
-      }
+    // Hydrate dataset
+    if (initialDataset) {
+      store.setCurrentDataset(initialDataset);
     }
 
-    // Clean up on unmount
+    // Hydrate saved state if any
+    if (Object.keys(initialSections).length > 0) {
+      store.hydrateReport(
+        initialSections,
+        initialTaggedInsights,
+        initialChatHistory,
+        initialCanvasCards
+      );
+    }
+
+    // Clean up on unmount (real unmount, not React Strict Mode double-fire)
     return () => {
       store.clearSession();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [reportId]);
 
   // Auto-save hook
   useAutoSave(reportId);

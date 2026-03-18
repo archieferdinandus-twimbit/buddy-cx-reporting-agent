@@ -25,7 +25,7 @@ export default async function ReportPage({ params }: Props) {
   const dataset = report.dataset || null;
 
   return (
-    <DashboardShell reportId={report.id} reportTitle={report.title}>
+    <DashboardShell reportId={report.id} reportTitle={report.title} hasDataset={!!dataset}>
       <ReportWorkspace
         reportId={report.id}
         reportTitle={report.title}

@@ -19,7 +19,7 @@ export function ChatPanel() {
   const [confirmClear, setConfirmClear] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { currentDataset, clearSession } = useAppStore();
+  const { currentDataset, clearSession, clearMessages, messages: storeMessages } = useAppStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -77,8 +77,24 @@ export function ChatPanel() {
             </h2>
           </div>
 
-          {/* Clear Data button — only shown when a dataset is active */}
-          {currentDataset && (
+          {/* Right-side action buttons */}
+          <div className="flex items-center gap-1.5">
+            {/* Clear Chat button — only shown when there are messages */}
+            {storeMessages.length > 0 && !isLoading && (
+              <button
+                onClick={() => clearMessages()}
+                title="Clear chat history"
+                className="flex items-center gap-1 rounded-md border border-cx-border px-2 py-1 text-[10px] text-cx-text-3 transition-colors hover:border-cx-border-2 hover:text-cx-text"
+              >
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Clear chat
+              </button>
+            )}
+
+            {/* Clear Data button — only shown when a dataset is active */}
+            {currentDataset && (
             <div className="flex items-center gap-1.5">
               {confirmClear ? (
                 <>
@@ -111,6 +127,7 @@ export function ChatPanel() {
               )}
             </div>
           )}
+          </div>{/* end right-side action buttons */}
         </div>
         <p className="mt-1 text-xs text-cx-text-3">
           Ask questions about your CX benchmark data

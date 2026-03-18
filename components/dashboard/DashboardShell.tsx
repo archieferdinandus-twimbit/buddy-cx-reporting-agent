@@ -10,15 +10,17 @@ interface DashboardShellProps {
   children: React.ReactNode;
   reportId?: string;
   reportTitle?: string;
+  hasDataset?: boolean;
 }
 
-export function DashboardShell({ children, reportId: propReportId, reportTitle: propReportTitle }: DashboardShellProps) {
+export function DashboardShell({ children, reportId: propReportId, reportTitle: propReportTitle, hasDataset: propHasDataset }: DashboardShellProps) {
   const router = useRouter();
   const { currentDataset, currentReportId: storeReportId, currentReportTitle: storeReportTitle, isSaving, saveReport } = useAppStore();
 
   // Use props (from server) as fallback if store hasn't hydrated yet
   const currentReportId = storeReportId || propReportId || null;
   const currentReportTitle = storeReportTitle || propReportTitle || null;
+  const showExport = currentDataset || propHasDataset;
 
   const handleSave = async () => {
     if (!currentReportId) return;
@@ -90,7 +92,7 @@ export function DashboardShell({ children, reportId: propReportId, reportTitle: 
           )}
 
           {/* Export controls — only show when a dataset is loaded */}
-          {currentDataset && <ExportDropdown />}
+          {showExport && <ExportDropdown />}
 
           <div className="hidden items-center gap-1.5 sm:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-cx-green animate-pulse" />

@@ -43,6 +43,7 @@ export function useAgentChat() {
 
       setIsLoading(true);
       abortRef.current = new AbortController();
+      let accumulated = "";
 
       try {
         const apiMessages = [...messages, userMessage].map((m) => ({
@@ -69,7 +70,6 @@ export function useAgentChat() {
         if (!reader) throw new Error("No response body");
 
         const decoder = new TextDecoder();
-        let accumulated = "";
 
         while (true) {
           const { done, value } = await reader.read();
@@ -112,7 +112,11 @@ export function useAgentChat() {
         }
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
-          updateLastMessage("An error occurred. Please try again.");
+          console.error("Agent chat error:", error);
+          const errorMsg = error.message?.includes("Agent error:")
+            ? `API error (${error.message}). Please try again.`
+            : "An error occurred. Please try again.";
+          updateLastMessage(accumulated || errorMsg);
         }
       } finally {
         setIsLoading(false);
